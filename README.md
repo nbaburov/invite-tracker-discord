@@ -1,70 +1,56 @@
 # Discord Invite Tracker
 
-## Overview
+A Discord bot that records which invite link each new member joined through and who created it, and reports invite statistics per member with slash commands.
 
-The **Discord Invite Tracker** is a powerful bot designed to monitor and manage invite links within a Discord server. It tracks invite usage, records who was invited, and provides detailed statistics on invites created by users. This application showcases my expertise in building scalable and maintainable applications using Python and Discord's API.
+> Shared as a reference. Not actively maintained for external contributions.
 
-## Features
+## What it does
 
-- **Invite Tracking**: Monitors invites created in the server and tracks their usage.
-- **User Statistics**: Provides detailed statistics on invites created by users, including the number of uses and the users invited.
-- **Slash Commands**: Utilizes Discord's slash commands for easy interaction.
-- **Data Persistence**: Saves invite data in a JSON file for easy retrieval and management.
+| Command | Who can use it | Result |
+|---|---|---|
+| `/createinvite <user> [channel]` | members with Create Invite and Manage Server | creates a permanent, unlimited invite in the channel (default: current) and tracks it for `<user>` |
+| `/invites [user]` | members with Manage Server | total uses of the user's invites (default: yourself) and their active links |
+| `/detailed-invites [user] [show_all]` | members with Manage Server | the same, plus who joined through each link and when: the latest 10, or all with `show_all` |
 
-## Technologies Used
+These are default permissions; server admins can change who sees each command under Server Settings → Integrations.
 
-- **Python**: The primary programming language for the bot.
-- **Discord.py**: A powerful library for interacting with the Discord API.
-- **dotenv**: For managing environment variables securely.
-- **JSON**: For data storage and retrieval.
-- **Git**: For version control.
+On start the bot snapshots every invite in each server it is in. When someone joins, it finds the invite whose use count went up and records the new member against it. Data is kept in a JSON file, so it survives restarts.
 
-## Prerequisites
+## Quickstart
 
-Before running the application, ensure you have the following installed:
+Requires Python 3.10+ and a bot application from the [Discord Developer Portal](https://discord.com/developers/applications) with the **Server Members** privileged intent enabled. Invite it with the `bot` and `applications.commands` scopes and the Manage Server and Create Invite permissions (listing invites needs Manage Server).
 
-- Python 3.12 or higher
-- pip (Python package installer)
+```bash
+git clone https://github.com/nixxxo/invite-tracker-discord.git
+cd invite-tracker-discord
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env    # set DISCORD_TOKEN
+python app.py
+```
 
-## Installation
+Slash commands are registered when the bot starts.
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/yourusername/discord-invite-tracker.git
-   cd discord-invite-tracker
-   ```
+## Architecture
 
-2. **Create a Virtual Environment**:
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate  # On Windows use `.venv\Scripts\activate`
-   ```
+A single script, `app.py`, on [py-cord](https://github.com/Pycord-Development/pycord).
 
-3. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+| Part | Responsibility |
+|---|---|
+| `on_ready` | syncs slash commands, loads each server's current invites into the tracker |
+| `on_member_join` | compares invite use counts to attribute the join, then saves |
+| slash commands | create tracked invites and render statistics as embeds |
+| `load_invites` / `save_invites` | read and write the JSON store |
 
-4. **Set Up Environment Variables**:
-   Create a `.env` file in the root directory and add your Discord bot token:
-   ```plaintext
-   DISCORD_TOKEN=your_discord_bot_token
-   INVITES_FILE=invites.json
-   ```
+## Configuration
 
-5. **Run the Application**:
-   ```bash
-   python app.py
-   ```
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `DISCORD_TOKEN` | yes | | bot token |
+| `INVITES_FILE` | no | `invites.json` | path of the JSON store |
 
-## Usage
+The store holds Discord user IDs, usernames and join times, so it is gitignored.
 
-Once the bot is running, you can use the following commands in your Discord server:
+## License
 
-- **/createinvite**: Create a new invite link for a specified user.
-- **/invites**: Show invite statistics for a user.
-- **/detailed-invites**: Show detailed invite statistics, including invited users.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a pull request or open an issue for any enhancements or bug fixes.
+MIT: see [LICENSE](LICENSE).
