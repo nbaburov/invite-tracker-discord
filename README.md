@@ -21,7 +21,7 @@ On start the bot snapshots every invite in each server it is in. When someone jo
 Requires Python 3.10+ and a bot application from the [Discord Developer Portal](https://discord.com/developers/applications) with the **Server Members** privileged intent enabled. Invite it with the `bot` and `applications.commands` scopes and the Manage Server and Create Invite permissions (listing invites needs Manage Server).
 
 ```bash
-git clone https://github.com/nixxxo/invite-tracker-discord.git
+git clone https://github.com/nbaburov/invite-tracker-discord.git
 cd invite-tracker-discord
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
