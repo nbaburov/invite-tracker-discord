@@ -53,4 +53,4 @@ The store holds Discord user IDs, usernames and join times, so it is gitignored.
 
 ## License
 
-MIT: see [LICENSE](LICENSE).
+[PolyForm Noncommercial 1.0.0](LICENSE): free for any noncommercial use with attribution. Commercial use needs a separate paid license; contact [NB Limited](https://nb-limited.com).
